@@ -8,11 +8,13 @@ class MyDiary_Database:
         try:
             self.connect_str = "dbname='mydiary_db' user='mydiary_user' " + \
                         "host='localhost' password='password' port='5432'"
-            self.conn = psycopg2.connect(self.connect_str)
+            self.conn = psycopg2.connect(dbname='mydiary_db', user='mydiary_user', host='localhost', password='password', port='5432')
             self.cursor = self.conn.cursor()
         except Exception as e:
             print("Unable to connect. Check dbname, user or password inputs.")
             print(e)
+        #self.my_db.new_entries_table
+        #self.my_db.new_entries_table
 
     def new_users_table(self):
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS users 
@@ -28,7 +30,7 @@ class MyDiary_Database:
                     user_id INTEGER NOT NULL, 
                     title VARCHAR(20) NOT NULL, 
                     data VARCHAR(500) NOT NULL, 
-                    date VARCHAR(10) NOT NULL);""")
+                    date_created VARCHAR(10) NOT NULL);""")
         self.conn.commit()
 
 def main():
@@ -36,7 +38,7 @@ def main():
     users = my_db.new_entries_table
     entries = my_db.new_entries_table
     insert_usr_str = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
-    insert_ent_str = """INSERT INTO entries (entry_id, user_id, title, data, date) VALUES(%s,%s,%s,%s,%s);"""
+    insert_ent_str = """INSERT INTO entries (entry_id, user_id, title, data, date_created) VALUES(%s,%s,%s,%s,%s);"""
     my_db.cursor.execute(insert_usr_str, (1,"Gordon Balaaka","gb@email.com","pass1"))
     my_db.cursor.execute(insert_usr_str, (1,"Simon Peter","sp@email.com","pass2"))
     my_db.cursor.execute(insert_usr_str, (1,"John Bosco","jb@email.com","pass3"))
