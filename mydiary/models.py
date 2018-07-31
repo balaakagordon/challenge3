@@ -1,12 +1,14 @@
 """
 Holds the app's classes and methods
 """
-
 # -*- coding: utf-8 -*-
 
+
 """importing packages"""
+from flask import Flask, jsonify
+
 from mydiary import db
-from mydiary import app_db, my_diary_object
+from mydiary import app_db#, my_diary_object
 #import jwt
 
 import datetime
@@ -17,9 +19,8 @@ now = datetime.datetime.now()
 parameters and methods """
 class MyDiary:
     def __init__(self):
-        self.current_user = None    #current user's id
+        self.current_user = 1    #current user's id
         self.user_entries = None
-        self.user_index = 1
 
     def getUser(self, user_id):
         sql_fn = """SELECT * from users WHERE user_id = %s;"""
@@ -44,8 +45,8 @@ class MyDiary:
         rows = app_db.cursor.fetchall()
         if rows[0] == []:
             sql_insert_fn = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
-            user_id_data = my_diary_object.getNextUserId + 1
-            app_db.cursor.execute(sql_insert_fn, (user_id_data,user_name,user_email,user_password))
+            #####user_id_data = my_diary_object.getNextUserId + 1
+            #app_db.cursor.execute(sql_insert_fn, (user_id_data,user_name,user_email,user_password))
             message = "Added successfully"
         else:
             message = "This user already exists!"
@@ -74,15 +75,15 @@ class MyDiary:
             message = "Nobody logged in!"
         return message
 
-    def getNextUserId(self):
-        sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
-        app_db.cursor.execute(sql_check_fn)
-        rows = app_db.cursor.fetchall()
-        largest_user_id = 0
-        for row in rows:
-            if row[0] > largest_user_id:
-                    largest_user_id = row[0]
-        return largest_user_id
+    # def getNextUserId(self):
+    #     sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
+    #     app_db.cursor.execute(sql_check_fn)
+    #     rows = app_db.cursor.fetchall()
+    #     largest_user_id = 0
+    #     for row in rows:
+    #         if row[0] > largest_user_id:
+    #                 largest_user_id = row[0]
+    #     return largest_user_id
 
 
 class Entries:
@@ -90,7 +91,6 @@ class Entries:
     parameters and methods """
 
     def __init__(self):
-        self.entry_index = 1
         self.entry_list = []
         self.all_entries = 0
         self.current_entries = 0
@@ -100,37 +100,34 @@ class Entries:
         app_db.cursor.execute(sql_fn)
         rows = app_db.cursor.fetchall()
         self.current_entries = len(rows)
-        self.all_entries = self.entry_index
+        self.all_entries = 0
 
-    def addEntry(self, user_id_data, title_data, entry_data, current_time):
-        """ once a diary entry is created it sends itself to \
+    def addEntry(self, user_id_data, title_data, entry_data, now_time):
+        """ once an entry's data is submitted the server checks whether it exists \
         Entries to be added to entrylist """
-        entry_id = self.entry_index
-        self.entry_index += 1
-
         sql_check_fn = """SELECT * from entries WHERE data = %s AND title = %s AND user_id = %s;"""
         app_db.cursor.execute(sql_check_fn, (entry_data, title_data, user_id_data))
         rows = app_db.cursor.fetchall()
         if rows == []:
-            sql_insert_fn = """INSERT INTO entries (entry_id, user_id, title, data, date) VALUES(%s,%s,%s,%s,%s);"""
-            entry_id = my_diary_object.user_entries.getNextId + 1
-            app_db.cursor.execute(sql_insert_fn, (entry_id,user_id_data,title_data,entry_data,current_time))
+            sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_created) VALUES(%s,%s,%s,%s);"""
+            ###entry_id = my_diary_object.user_entries.getNextId + 1
+            app_db.cursor.execute(sql_insert_fn, (user_id_data,title_data,entry_data,now_time))
             message = "Entry added successfully"
         else:
             message = "Entry already exists"
         return message
         
 
-    def modifyEntry(self, title_data, entry_data, current_time, entry_id_data, user_id_data):
+    def modifyEntry(self, title_data, entry_data, edit_time, entry_id_data, user_id_data):
         """ this method edits diary entries """
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s"""
-        app_db.cursor.execute(sql_check_fn, (user_id_data, entry_id_data))
+        app_db.cursor.execute(sql_check_fn, [user_id_data, entry_id_data])
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Entry not found"
         else:
-            sql_update_fn = """UPDATE entries SET title = %s, data = %s, date = %s) WHERE user_id = %s AND entry_id = %s;"""
-            app_db.cursor.execute(sql_update_fn, (title_data,entry_data,current_time,user_id_data,entry_id_data))
+            sql_update_fn = """UPDATE entries SET title = %s, data = %s, date_created = %s WHERE user_id = %s AND entry_id = %s;"""
+            app_db.cursor.execute(sql_update_fn, (title_data,entry_data,edit_time,user_id_data,entry_id_data))
             message = "Entry edited"
         return message
 
@@ -149,49 +146,45 @@ class Entries:
         return message
 
     def getOneEntry(self, user_id, entry_id):
-        sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn)
+        sql_check_fn = """SELECT * from entries WHERE user_id = %d AND entry_id = %d;"""
+        app_db.cursor.execute(sql_check_fn, (user_id, entry_id))
         row = app_db.cursor.fetchall()      #should fetch one entry
         if row == []:
             message = "Entry does not exist"
-            return message
-        else:
-            entry = {
-                'entry_id':row[0], 
+            return jsonify({"message":message})
+        entry = {
+            'entry_id':row[0][0], 
+            'user_id':row[0][1], 
+            'title':row[0][2],
+            'data':row[0][3],
+            'date':row[0][4]
+            }
+        return jsonify({"entry":entry})
+
+    def getAllEntries(self, user_id_data):
+        sql_check_fn = """SELECT * from entries WHERE user_id = %s;"""
+        app_db.cursor.execute(sql_check_fn, [user_id_data])
+        rows = app_db.cursor.fetchall()
+        if rows == []:
+            message = "No entries found"
+            return jsonify({"error":message})
+        entry_list = []
+        for row in rows:
+            entry = { 
                 'user_id':row[1], 
                 'title':row[2],
                 'data':row[3],
                 'date':row[4]
                 }
-            message = "Entry found"
-            return message, entry
+            entry_list.append(entry)
+        return jsonify({"entries":entry_list[:]})
 
-    def getAllEntries(self):
-        sql_check_fn = """SELECT * from entries WHERE user_id = %s;"""
-        app_db.cursor.execute(sql_check_fn)
-        rows = app_db.cursor.fetchall()
-        if rows == []:
-            message = "No entries found"
-            return message
-        else:
-            self.entry_list = []
-            for row in rows:
-                entry = {
-                    'entry_id':row[0], 
-                    'user_id':row[1], 
-                    'title':row[2],
-                    'data':row[3],
-                    'date':row[4]
-                    }
-                self.entry_list.append(entry)
-            return self.entry_list
-
-    def getNextId(self):    
-        sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
-        app_db.cursor.execute(sql_check_fn)
-        rows = app_db.cursor.fetchall()
-        largest_entry_id = 0
-        for row in rows:
-            if row[0] > largest_entry_id:
-                    largest_entry_id = row[0]
-        return largest_entry_id
+    # def getNextEntryId(self):    
+    #     sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
+    #     app_db.cursor.execute(sql_check_fn)
+    #     rows = app_db.cursor.fetchall()
+    #     largest_entry_id = 0
+    #     for row in rows:
+    #         if row[0] >= largest_entry_id:
+    #                 largest_entry_id = row[0]
+    #     return largest_entry_id
