@@ -13,7 +13,7 @@ now_time = "".join(str(datetime.datetime.now().day)\
             +"/"+str(datetime.datetime.now().year))
 
 """ returns a single diary entry """
-@app.route('/home/api/v1/entries/<int:diary_entry_id>', methods=['GET'])
+@app.route('/api/v1/entries/<int:diary_entry_id>', methods=['GET'])
 #@login_required
 def get_entry(diary_entry_id):
     """ outputs one user entry """
@@ -27,7 +27,7 @@ def get_entry(diary_entry_id):
         return get_entry
 
 """ returns all diary entries """
-@app.route('/home/api/v1/entries', methods=['GET'])
+@app.route('/api/v1/entries', methods=['GET'])
 #@login_required
 def get_all_entries():
     """ this method outputs all entries """
@@ -39,13 +39,12 @@ def get_all_entries():
     return get_entries
 
 """ this route adds single diary entry """
-@app.route('/home/api/v1/entries', methods=['POST'])
+@app.route('/api/v1/entries', methods=['POST'])
 #@login_required
 def post_entry():
     """ this method creates a new entry """
     #token = request.args.get('token')
     #data = jwt.decode(token, app.config['SECRET_KEY'])
-
     if not request.json or not 'entrydata' in request.json:
         return jsonify({"error": "Incorrect data format"})
     else:
@@ -65,14 +64,13 @@ def post_entry():
         return jsonify({'message' : add_entry, 'entry added' : entry})
 
 """ this route updates a single diary entry """
-@app.route('/home/api/v1/entries/<int:diary_entry_id>', \
+@app.route('/api/v1/entries/<int:diary_entry_id>', \
                 methods=['PUT'])
 #@login_required
 def put_entry(diary_entry_id):
     """ this method updates an entry's data """
     #token = request.args.get('token')
     #data = jwt.decode(token, app.config['SECRET_KEY'])
-
     if not request.json:
         return jsonify({"error": "Incorrect data format"})
     elif 'entrydata' in request.json and \
@@ -104,7 +102,6 @@ def delete_entry(diary_entry_id):
     """ this method deletes an entry """
     #token = request.args.get('token')
     #data = jwt.decode(token, app.config['SECRET_KEY'])
-
     entry_id_data = diary_entry_id
     user_id_data = my_diary_object.current_user
     entry_delete = my_diary_object.user_entries.deleteEntry(entry_id_data, user_id_data)

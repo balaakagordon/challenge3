@@ -40,21 +40,21 @@ class MyDiary:
             return message, user         #returns user as a dictionary
 
     def addUser(self, user_name, user_email, user_password):
-        sql_check_fn = """SELECT * from entries WHERE email = %s;"""
-        app_db.cursor.execute(sql_check_fn, (user_email))
+        sql_check_fn = """SELECT * from users WHERE email = %s;"""
+        app_db.cursor.execute(sql_check_fn, [user_email])
         rows = app_db.cursor.fetchall()
-        if rows[0] == []:
-            sql_insert_fn = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
+        if rows == []:
+            sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s,%s,%s);"""
             #####user_id_data = my_diary_object.getNextUserId + 1
-            #app_db.cursor.execute(sql_insert_fn, (user_id_data,user_name,user_email,user_password))
+            app_db.cursor.execute(sql_insert_fn, (user_name,user_email,user_password))
             message = "Added successfully"
         else:
             message = "This user already exists!"
         return message
 
-    def login(self, login_email, login_password):
+    def userLogin(self, login_email, login_password):
         """ login method requires a username and password """
-        sql_fn = """SELECT * from entries WHERE email = %s AND password = %s;"""
+        sql_fn = """SELECT * from users WHERE email = %s AND password = %s;"""
         app_db.cursor.execute(sql_fn, (login_email, login_password))
         rows = app_db.cursor.fetchall()
         if rows == []:

@@ -12,6 +12,7 @@ app_db.new_users_table
 app_db.new_entries_table
 
 from . import entries
+from . import users
 
 # def main():
 #     insert_usr_str = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
