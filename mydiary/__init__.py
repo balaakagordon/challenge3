@@ -1,11 +1,16 @@
 from flask import Flask, jsonify, request
-#from mydiary import entries, users
-#from models import MyDiary, Entries
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
+
 from .db import MyDiary_Database
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'
+
+app.config['JWT_SECRET_KEY'] = 'secret'
+jwt = JWTManager(app)
 
 app_db = MyDiary_Database()
 app_db.new_users_table
@@ -32,6 +37,3 @@ from . import users
 #     my_users = app_db.cursor.fetchall()
 #     # print(my_entries)
 #     # print(my_users)
-
-
-# if __name__

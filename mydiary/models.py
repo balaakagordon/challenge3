@@ -37,7 +37,7 @@ class MyDiary:
                 "password" : rows[3]
             }
             message = "User found"
-            return message, user         #returns user as a dictionary
+            return jsonify({message:user})
 
     def addUser(self, user_name, user_email, user_password):
         sql_check_fn = """SELECT * from users WHERE email = %s;"""
@@ -45,7 +45,6 @@ class MyDiary:
         rows = app_db.cursor.fetchall()
         if rows == []:
             sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s,%s,%s);"""
-            #####user_id_data = my_diary_object.getNextUserId + 1
             app_db.cursor.execute(sql_insert_fn, (user_name,user_email,user_password))
             message = "Added successfully"
         else:
@@ -61,8 +60,7 @@ class MyDiary:
             message = "Sorry, incorrect credentials"
         else:
             self.current_user == rows[0]
-            message = "You've been logged in successfully"
-        return message
+        return self.current_user
 
     def logout(self):
         """ logout method clears the currentUser and userEntries \
@@ -74,16 +72,6 @@ class MyDiary:
         else:
             message = "Nobody logged in!"
         return message
-
-    # def getNextUserId(self):
-    #     sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
-    #     app_db.cursor.execute(sql_check_fn)
-    #     rows = app_db.cursor.fetchall()
-    #     largest_user_id = 0
-    #     for row in rows:
-    #         if row[0] > largest_user_id:
-    #                 largest_user_id = row[0]
-    #     return largest_user_id
 
 
 class Entries:
@@ -110,7 +98,6 @@ class Entries:
         rows = app_db.cursor.fetchall()
         if rows == []:
             sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_created) VALUES(%s,%s,%s,%s);"""
-            ###entry_id = my_diary_object.user_entries.getNextId + 1
             app_db.cursor.execute(sql_insert_fn, (user_id_data,title_data,entry_data,now_time))
             message = "Entry added successfully"
         else:
@@ -136,7 +123,7 @@ class Entries:
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
         app_db.cursor.execute(sql_check_fn, (user_id_data, entry_id_data))
         rows = app_db.cursor.fetchall()
-        if rows == []:         #should get one entry
+        if rows == []:
             message = "Unable to delete. Entry does not exist" #abort(404)
         else:
             sql_delete_fn = """DELETE from entries where user_id = %s AND entry_id = %s;"""

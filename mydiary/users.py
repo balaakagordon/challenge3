@@ -1,8 +1,12 @@
 from flask import Flask, jsonify, request
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 import datetime
 
 from models import MyDiary, Entries
-from mydiary import app, app_db
+from mydiary import app, app_db#, jwt
 
 
 my_diary_object = MyDiary()
@@ -45,9 +49,9 @@ def userlogin():
             login_email=request.json.get('email', "")
             login_password=request.json.get('password', "")
             logged_in = my_diary_object.userLogin(login_email, login_password)
-            if logged_in == "You've been logged in successfully":
-                #token = jwt.encode({'user' : user_id , 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-                #return jsonify({'login' : 'sucessful', 'token' : token.decode('UTF-8') })
-                return jsonify({'login' : 'sucessful'})
+            #if logged_in == "You've been logged in successfully":
+            if type(logged_in) == int:
+                access_token = create_access_token(identity=logged_in)
+                return jsonify(access_token=access_token), 200
             else:
                 return jsonify({'login' : logged_in})
