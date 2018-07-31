@@ -35,8 +35,8 @@ class MyDiary_Database:
 
 def main():
     my_db = MyDiary_Database()
-    users = my_db.new_entries_table
-    entries = my_db.new_entries_table
+    #users = my_db.new_entries_table
+    #entries = my_db.new_entries_table
     insert_usr_str = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
     insert_ent_str = """INSERT INTO entries (entry_id, user_id, title, data, date_created) VALUES(%s,%s,%s,%s,%s);"""
     my_db.cursor.execute(insert_usr_str, (1,"Gordon Balaaka","gb@email.com","pass1"))

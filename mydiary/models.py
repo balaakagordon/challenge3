@@ -38,19 +38,18 @@ class MyDiary:
             message = "User found"
             return message, user         #returns user as a dictionary
 
-    def addUser(self, user_id_data, user_name, user_email, user_password):
-
-        sql_check_fn = """SELECT * from entries WHERE email = %s AND name = %s;"""
-        app_db.cursor.execute(sql_check_fn, (user_email, user_name))
+    def addUser(self, user_name, user_email, user_password):
+        sql_check_fn = """SELECT * from entries WHERE email = %s;"""
+        app_db.cursor.execute(sql_check_fn, (user_email))
         rows = app_db.cursor.fetchall()
         if rows[0] == []:
             sql_insert_fn = """INSERT INTO users (user_id, name, email, password) VALUES(%s,%s,%s,%s);"""
+            user_id_data = my_diary_object.getNextUserId + 1
             app_db.cursor.execute(sql_insert_fn, (user_id_data,user_name,user_email,user_password))
             message = "Added successfully"
         else:
             message = "This user already exists!"
         return message
-    
 
     def login(self, login_email, login_password):
         """ login method requires a username and password """
@@ -75,6 +74,17 @@ class MyDiary:
             message = "Nobody logged in!"
         return message
 
+    def getNextUserId(self):
+        sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
+        app_db.cursor.execute(sql_check_fn)
+        rows = app_db.cursor.fetchall()
+        largest_user_id = 0
+        for row in rows:
+            if row[0] > largest_user_id:
+                    largest_user_id = row[0]
+        return largest_user_id
+
+
 class Entries:
     """ Entry lists for each user are modelled as objects with \
     parameters and methods """
@@ -92,7 +102,7 @@ class Entries:
         self.current_entries = len(rows)
         self.all_entries = self.entry_index
 
-    def addEntry(self, entry_id_data, user_id_data, title_data, entry_data, current_time):
+    def addEntry(self, user_id_data, title_data, entry_data, current_time):
         """ once a diary entry is created it sends itself to \
         Entries to be added to entrylist """
         entry_id = self.entry_index
@@ -103,6 +113,7 @@ class Entries:
         rows = app_db.cursor.fetchall()
         if rows == []:
             sql_insert_fn = """INSERT INTO entries (entry_id, user_id, title, data, date) VALUES(%s,%s,%s,%s,%s);"""
+            entry_id = my_diary_object.user_entries.getNextId + 1
             app_db.cursor.execute(sql_insert_fn, (entry_id,user_id_data,title_data,entry_data,current_time))
             message = "Entry added successfully"
         else:
@@ -174,3 +185,13 @@ class Entries:
                     }
                 self.entry_list.append(entry)
             return self.entry_list
+
+    def getNextId(self):    
+        sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
+        app_db.cursor.execute(sql_check_fn)
+        rows = app_db.cursor.fetchall()
+        largest_entry_id = 0
+        for row in rows:
+            if row[0] > largest_entry_id:
+                    largest_entry_id = row[0]
+        return largest_entry_id
