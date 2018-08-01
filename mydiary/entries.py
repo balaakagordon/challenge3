@@ -42,36 +42,38 @@ def get_all_entries():
 @jwt_required
 def post_entry():
     """ this method creates a new entry """
-    if not request.json or not 'entrydata' in request.json:
-        return jsonify({"error": "Incorrect data format"})
-    else:
-        entry_data=request.json.get('entrydata', "")
-        title_data=request.json.get('entrytitle', "")
-        
-        user_id_data = my_diary_object.current_user
-        add_entry = my_diary_object.user_entries.addEntry(user_id_data, title_data, entry_data, now_time)
-        if add_entry == "Entry added successfully":
-            entry = {
-                'user_id' : user_id_data,
-                'title' : title_data,
-                'entrydata' : entry_data,
-                'datecreated' : now_time
-            }
-        return jsonify({'message' : add_entry, 'entry added' : entry})
+    if not request.json:
+        return jsonify({"input error": "please input json data"}), 401
+    if 'entrydata' not in request.json:
+        return jsonify({"message": "Diary entry field cannot be left blank"}), 401
+    if 'entrytitle' not in request.json:
+        return jsonify({"message": "Diary entry title cannot be left blank"}), 401
+    entry_data=request.json.get('entrydata', "")
+    title_data=request.json.get('entrytitle', "")
+
+    user_id_data = my_diary_object.current_user
+    add_entry = my_diary_object.user_entries.addEntry(user_id_data, title_data, entry_data, now_time)
+    if add_entry == "Entry added successfully":
+        entry = {
+            'user_id' : user_id_data,
+            'title' : title_data,
+            'entrydata' : entry_data,
+            'datecreated' : now_time
+        }
+    return jsonify({'message' : add_entry, 'entry added' : entry})
 
 """ this route updates a single diary entry """
 @app.route('/api/v1/entries/<int:diary_entry_id>', \
                 methods=['PUT'])
-@jwt_required
+#@jwt_required
 def put_entry(diary_entry_id):
     """ this method updates an entry's data """
     if not request.json:
-        return jsonify({"error": "Incorrect data format"})
-    elif 'entrydata' in request.json and \
-                type(request.json['entrydata']) is not unicode:
-        return jsonify({"error": "Incorrect data format"})
-    elif 'title' in request.json and type(request.json['title']) is not str:
-        return jsonify({"error": "Incorrect data format"})
+        return jsonify({"input error": "please input json data"}), 401
+    if 'entrydata' not in request.json:
+        return jsonify({"message": "Diary entry field cannot be left blank"}), 401
+    if 'entrytitle' not in request.json:
+        return jsonify({"message": "Diary entry title cannot be left blank"}), 401
     entry_data = request.json.get('entrydata', "")
     title_data = request.json.get('entrytitle', "")
     entry_id_data = diary_entry_id

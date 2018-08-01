@@ -18,7 +18,7 @@ now = datetime.datetime.now()
 parameters and methods """
 class MyDiary:
     def __init__(self):
-        self.current_user = None
+        self.current_user = 1
         self.user_entries = None
 
     def getUser(self, user_id):
@@ -58,8 +58,10 @@ class MyDiary:
         if rows == []:
             message = "Sorry, incorrect credentials"
             return message
-        self.current_user == rows[0][0]
-        return self.current_user
+        # self.current_user = rows[0][0]  #
+        # return self.current_user    #
+        return rows[0][0]
+
 
     def logout(self):
         """ logout method clears the currentUser and userEntries \
@@ -93,11 +95,10 @@ class Entries:
         """ once an entry's data is submitted the server checks whether it exists \
         Entries to be added to entrylist """
         sql_check_fn = """SELECT * from entries WHERE data = %s AND title = %s AND user_id = %s;"""
-        ###Select all then search through retrieved info
         app_db.cursor.execute(sql_check_fn, (entry_data, title_data, user_id_data))
         rows = app_db.cursor.fetchall()
         if rows == []:
-            sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_created) VALUES(%s,%s,%s,%s);"""
+            sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_modified) VALUES(%s,%s,%s,%s);"""
             app_db.cursor.execute(sql_insert_fn, (user_id_data,title_data,entry_data,now_time))
             message = "Entry added successfully"
         else:
@@ -124,7 +125,7 @@ class Entries:
         app_db.cursor.execute(sql_check_fn, (user_id_data, entry_id_data))
         rows = app_db.cursor.fetchall()
         if rows == []:
-            message = "Unable to delete. Entry does not exist" #abort(404)
+            message = "Unable to delete. Entry does not exist"
         else:
             sql_delete_fn = """DELETE from entries where user_id = %s AND entry_id = %s;"""
             app_db.cursor.execute(sql_delete_fn, (user_id_data, entry_id_data))
@@ -135,7 +136,7 @@ class Entries:
     def getOneEntry(self, user_id, entry_id):
         sql_check_fn = """SELECT * from entries WHERE user_id = %d AND entry_id = %d;"""
         app_db.cursor.execute(sql_check_fn, (user_id, entry_id))
-        row = app_db.cursor.fetchall()      #should fetch one entry
+        row = app_db.cursor.fetchall()
         if row == []:
             message = "Entry does not exist"
             return jsonify({"message":message})

@@ -27,7 +27,6 @@ def register():
     invalid_str = ",.;:!][)("
     if request.method == 'POST':
         if not request.json:
-            #return jsonify({"added":"success"})
             return jsonify({"input error": "invalid data type"}), 401
         if not 'email' in request.json:
             return jsonify({"input error": "Please provide an email address"}), 401
@@ -84,7 +83,14 @@ def userlogin():
         login_email=request.json.get('email', "")
         login_password=request.json.get('password', "")
         logged_in = my_diary_object.userLogin(login_email, login_password)
-        if logged_in == "Sorry, incorrect credentials":
-            return jsonify({'message' : logged_in}), 400
-        access_token = create_access_token(identity=logged_in)
-        return jsonify(access_token=access_token), 200
+        if type(logged_in) == int:
+            my_diary_object.current_user = logged_in
+            access_token = create_access_token(identity=logged_in)
+            return jsonify(access_token=access_token), 200
+        else:
+            return jsonify({'login' : logged_in})
+        # if logged_in == "Sorry, incorrect credentials":
+        #     return jsonify({'message' : logged_in}), 400
+        # my_diary_object.current_user = logged_in
+        # access_token = create_access_token(identity=logged_in)
+        # return jsonify(access_token=access_token), 200
