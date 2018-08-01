@@ -47,9 +47,9 @@ def post_entry():
     if not request.json:
         return jsonify({"input error": "please input json data"}), 401
     if 'entrydata' not in request.json:
-        return jsonify({"message": "Diary entry field cannot be left blank"}), 401
+        return jsonify({"message": "Diary entry field cannot be left blank"}), 400
     if 'entrytitle' not in request.json:
-        return jsonify({"message": "Diary entry title cannot be left blank"}), 401
+        return jsonify({"message": "Diary entry title cannot be left blank"}), 400
     entry_data=request.json.get('entrydata', "")
     title_data=request.json.get('entrytitle', "")
     user_id_data = get_jwt_identity()
@@ -77,9 +77,9 @@ def put_entry(diary_entry_id):
     if not request.json:
         return jsonify({"input error": "please input json data"}), 401
     if 'entrydata' not in request.json:
-        return jsonify({"message": "Diary entry field cannot be left blank"}), 401
+        return jsonify({"message": "Diary entry field cannot be left blank"}), 400
     if 'entrytitle' not in request.json:
-        return jsonify({"message": "Diary entry title cannot be left blank"}), 401
+        return jsonify({"message": "Diary entry title cannot be left blank"}), 400
     entry_data = request.json.get('entrydata', "")
     title_data = request.json.get('entrytitle', "")
     user_id_data = get_jwt_identity()

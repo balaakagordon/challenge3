@@ -28,12 +28,12 @@ def register():
     if request.method == 'POST':
         if not request.json:
             return jsonify({"input error": "invalid data type"}), 401
-        if not 'email' in request.json:
-            return jsonify({"input error": "Please provide an email address"}), 401
-        if not 'name' in request.json:
-            return jsonify({"input error": "Please provide a name for the user"}), 401
-        if not 'password' in request.json:
-            return jsonify({"input error": "Please provide a user password"}), 401
+        if 'email' not in request.json:
+            return jsonify({"input error": "Please provide an email address"}), 400
+        if 'name' not in request.json:
+            return jsonify({"input error": "Please provide a name for the user"}), 400
+        if 'password' not in request.json:
+            return jsonify({"input error": "Please provide a user password"}), 400
         user_name=request.json.get('name', "")
         name_error = False
         if len(user_name) <= 4:
