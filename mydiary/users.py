@@ -84,11 +84,9 @@ def userlogin():
         login_password=request.json.get('password', "")
         logged_in = my_diary_object.userLogin(login_email, login_password)
         if type(logged_in) == int:
-            my_diary_object.current_user = logged_in
             access_token = create_access_token(identity=logged_in)
             return jsonify(access_token=access_token), 200
-        else:
-            return jsonify({'login' : logged_in})
+        return jsonify({'login' : logged_in})
         # if logged_in == "Sorry, incorrect credentials":
         #     return jsonify({'message' : logged_in}), 400
         # my_diary_object.current_user = logged_in

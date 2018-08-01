@@ -18,25 +18,8 @@ now = datetime.datetime.now()
 parameters and methods """
 class MyDiary:
     def __init__(self):
-        self.current_user = 1
+        self.current_user = None
         self.user_entries = None
-
-    def getUser(self, user_id):
-        sql_fn = """SELECT * from users WHERE user_id = %s;"""
-        app_db.cursor.execute(sql_fn, (user_id))
-        rows = app_db.cursor.fetchall()
-        if rows == []:
-            message = "User not found"
-            return message
-        else:
-            user = {
-                "user_id" : rows[0],
-                "name" : rows[1],
-                "email" : rows[2],
-                "password" : rows[3]
-            }
-            message = "User found"
-            return jsonify({message: user})
 
     def addUser(self, user_name, user_email, user_password):
         sql_check_fn = """SELECT * from users WHERE email = %s;"""
@@ -58,8 +41,6 @@ class MyDiary:
         if rows == []:
             message = "Sorry, incorrect credentials"
             return message
-        # self.current_user = rows[0][0]  #
-        # return self.current_user    #
         return rows[0][0]
 
 
@@ -84,11 +65,6 @@ class Entries:
         self.all_entries = 0
         self.current_entries = 0
         self.deleted_entries = 0
-        
-        #sql_fn = """SELECT * from entries;"""
-        #app_db.cursor.execute(sql_fn)
-        #rows = app_db.cursor.fetchall()
-        #self.current_entries = len(rows)
         self.all_entries = 0
 
     def addEntry(self, user_id_data, title_data, entry_data, now_time):
@@ -166,13 +142,3 @@ class Entries:
                 }
             entry_list.append(entry)
         return jsonify({"entries":entry_list[:]})
-
-    # def getNextEntryId(self):    
-    #     sql_check_fn = """SELECT * from entries;""" # WHERE email = %s AND name = %s
-    #     app_db.cursor.execute(sql_check_fn)
-    #     rows = app_db.cursor.fetchall()
-    #     largest_entry_id = 0
-    #     for row in rows:
-    #         if row[0] >= largest_entry_id:
-    #                 largest_entry_id = row[0]
-    #     return largest_entry_id
