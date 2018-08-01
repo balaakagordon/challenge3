@@ -5,16 +5,16 @@ from flask_jwt_extended import (
 )
 import datetime
 
-from models import MyDiary, Entries
-from mydiary import app, app_db#, jwt
+from .models import MyDiary, Entries
+from mydiary import app, app_db
 
 
 my_diary_object = MyDiary()
 my_diary_object.user_entries = Entries()
 
-now_time = "".join(str(datetime.datetime.now().day)\
-            +"/"+str(datetime.datetime.now().month)\
-            +"/"+str(datetime.datetime.now().year))
+now_time = "".join(str(datetime.datetime.now().day) + 
+                    "/" + str(datetime.datetime.now().month) + 
+                    "/" + str(datetime.datetime.now().year))
 
 
 """ this route links to the login page """
@@ -49,7 +49,6 @@ def userlogin():
             login_email=request.json.get('email', "")
             login_password=request.json.get('password', "")
             logged_in = my_diary_object.userLogin(login_email, login_password)
-            #if logged_in == "You've been logged in successfully":
             if type(logged_in) == int:
                 access_token = create_access_token(identity=logged_in)
                 return jsonify(access_token=access_token), 200

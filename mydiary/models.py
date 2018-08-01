@@ -8,8 +8,7 @@ Holds the app's classes and methods
 from flask import Flask, jsonify
 
 from mydiary import db
-from mydiary import app_db#, my_diary_object
-#import jwt
+from mydiary import app_db
 
 import datetime
 now = datetime.datetime.now()
@@ -19,7 +18,7 @@ now = datetime.datetime.now()
 parameters and methods """
 class MyDiary:
     def __init__(self):
-        self.current_user = 1    #current user's id
+        self.current_user = None
         self.user_entries = None
 
     def getUser(self, user_id):
@@ -37,15 +36,15 @@ class MyDiary:
                 "password" : rows[3]
             }
             message = "User found"
-            return jsonify({message:user})
+            return jsonify({message: user})
 
     def addUser(self, user_name, user_email, user_password):
         sql_check_fn = """SELECT * from users WHERE email = %s;"""
         app_db.cursor.execute(sql_check_fn, [user_email])
         rows = app_db.cursor.fetchall()
         if rows == []:
-            sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s,%s,%s);"""
-            app_db.cursor.execute(sql_insert_fn, (user_name,user_email,user_password))
+            sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s, %s, %s);"""
+            app_db.cursor.execute(sql_insert_fn, (user_name, user_email, user_password))
             message = "Added successfully"
         else:
             message = "This user already exists!"
@@ -58,8 +57,8 @@ class MyDiary:
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Sorry, incorrect credentials"
-        else:
-            self.current_user == rows[0]
+            return message
+        self.current_user == rows[0]
         return self.current_user
 
     def logout(self):
@@ -84,16 +83,17 @@ class Entries:
         self.current_entries = 0
         self.deleted_entries = 0
         
-        sql_fn = """SELECT * from entries;"""
-        app_db.cursor.execute(sql_fn)
-        rows = app_db.cursor.fetchall()
-        self.current_entries = len(rows)
+        #sql_fn = """SELECT * from entries;"""
+        #app_db.cursor.execute(sql_fn)
+        #rows = app_db.cursor.fetchall()
+        #self.current_entries = len(rows)
         self.all_entries = 0
 
     def addEntry(self, user_id_data, title_data, entry_data, now_time):
         """ once an entry's data is submitted the server checks whether it exists \
         Entries to be added to entrylist """
         sql_check_fn = """SELECT * from entries WHERE data = %s AND title = %s AND user_id = %s;"""
+        ###Select all then search through retrieved info
         app_db.cursor.execute(sql_check_fn, (entry_data, title_data, user_id_data))
         rows = app_db.cursor.fetchall()
         if rows == []:
@@ -107,7 +107,7 @@ class Entries:
 
     def modifyEntry(self, title_data, entry_data, edit_time, entry_id_data, user_id_data):
         """ this method edits diary entries """
-        sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s"""
+        sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
         app_db.cursor.execute(sql_check_fn, [user_id_data, entry_id_data])
         rows = app_db.cursor.fetchall()
         if rows == []:
