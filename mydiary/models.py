@@ -58,7 +58,7 @@ class MyDiary:
         if rows == []:
             message = "Sorry, incorrect credentials"
             return message
-        self.current_user == rows[0]
+        self.current_user == rows[0][0]
         return self.current_user
 
     def logout(self):
