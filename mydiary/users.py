@@ -24,7 +24,7 @@ now_time = "".join(str(datetime.datetime.now().day) +
 def register():
     nums = "0123456789"
     #invalid_str = ",.;:!][(<)|>@£#%^&*-_=+}{?"
-    invalid_str = ",.;:!][)("
+    invalid_str = ",.;:!][)(><+-=}{"
     if request.method == 'POST':
         if not request.json:
             return jsonify({"input error": "invalid data type"}), 401
@@ -52,8 +52,6 @@ def register():
         email_error = False
         if "@" not in user_email:
             email_error = True
-        # elif (".com" not in user_email) or (".co." not in user_email):
-        #     email_error = True
         elif user_email[0] in invalid_str:
             email_error = True
         if email_error == True:
@@ -86,9 +84,4 @@ def userlogin():
         if type(logged_in) == int:
             access_token = create_access_token(identity=logged_in)
             return jsonify(access_token=access_token), 200
-        return jsonify({'login' : logged_in})
-        # if logged_in == "Sorry, incorrect credentials":
-        #     return jsonify({'message' : logged_in}), 400
-        # my_diary_object.current_user = logged_in
-        # access_token = create_access_token(identity=logged_in)
-        # return jsonify(access_token=access_token), 200
+        return jsonify({'login' : logged_in}), 400

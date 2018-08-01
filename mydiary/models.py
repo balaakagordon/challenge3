@@ -18,7 +18,6 @@ now = datetime.datetime.now()
 parameters and methods """
 class MyDiary:
     def __init__(self):
-        self.current_user = None
         self.user_entries = None
 
     def addUser(self, user_name, user_email, user_password):
@@ -27,7 +26,11 @@ class MyDiary:
         rows = app_db.cursor.fetchall()
         if rows == []:
             sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s, %s, %s);"""
-            app_db.cursor.execute(sql_insert_fn, (user_name, user_email, user_password))
+            app_db.cursor.execute(sql_insert_fn, (
+                            user_name,
+                            user_email,
+                            user_password
+                            ))
             message = "Added successfully"
         else:
             message = "This user already exists!"
@@ -36,7 +39,10 @@ class MyDiary:
     def userLogin(self, login_email, login_password):
         """ login method requires a username and password """
         sql_fn = """SELECT * from users WHERE email = %s AND password = %s;"""
-        app_db.cursor.execute(sql_fn, (login_email, login_password))
+        app_db.cursor.execute(sql_fn, (
+                            login_email,
+                            login_password
+                            ))
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Sorry, incorrect credentials"
@@ -61,21 +67,26 @@ class Entries:
     parameters and methods """
 
     def __init__(self):
-        self.entry_list = []
-        self.all_entries = 0
-        self.current_entries = 0
-        self.deleted_entries = 0
-        self.all_entries = 0
+        pass
 
     def addEntry(self, user_id_data, title_data, entry_data, now_time):
         """ once an entry's data is submitted the server checks whether it exists \
         Entries to be added to entrylist """
         sql_check_fn = """SELECT * from entries WHERE data = %s AND title = %s AND user_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, (entry_data, title_data, user_id_data))
+        app_db.cursor.execute(sql_check_fn, (
+                            entry_data,
+                            title_data,
+                            user_id_data
+                            ))
         rows = app_db.cursor.fetchall()
         if rows == []:
-            sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_modified) VALUES(%s,%s,%s,%s);"""
-            app_db.cursor.execute(sql_insert_fn, (user_id_data,title_data,entry_data,now_time))
+            sql_insert_fn = """INSERT INTO entries (user_id, title, data, date_modified) VALUES(%s, %s, %s, %s);"""
+            app_db.cursor.execute(sql_insert_fn, (
+                            user_id_data,
+                            title_data,
+                            entry_data,
+                            now_time
+                            ))
             message = "Entry added successfully"
         else:
             message = "Entry already exists"
@@ -83,30 +94,44 @@ class Entries:
         
 
     def modifyEntry(self, title_data, entry_data, edit_time, entry_id_data, user_id_data):
-        """ this method edits diary entries """
+        """ edits diary entries """
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, [user_id_data, entry_id_data])
+        app_db.cursor.execute(sql_check_fn, (
+                            user_id_data,
+                            entry_id_data
+                            ))
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Entry not found"
         else:
             sql_update_fn = """UPDATE entries SET title = %s, data = %s, date_created = %s WHERE user_id = %s AND entry_id = %s;"""
-            app_db.cursor.execute(sql_update_fn, (title_data,entry_data,edit_time,user_id_data,entry_id_data))
+            app_db.cursor.execute(sql_update_fn, (
+                            title_data,
+                            entry_data,
+                            edit_time,
+                            user_id_data,
+                            entry_id_data
+                            ))
             message = "Entry edited"
         return message
 
     def deleteEntry(self, entry_id_data, user_id_data):
         """ this method deletes diary entries """
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, (user_id_data, entry_id_data))
+        app_db.cursor.execute(sql_check_fn, (
+                            user_id_data,
+                            entry_id_data
+                            ))
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Unable to delete. Entry does not exist"
         else:
             sql_delete_fn = """DELETE from entries where user_id = %s AND entry_id = %s;"""
-            app_db.cursor.execute(sql_delete_fn, (user_id_data, entry_id_data))
+            app_db.cursor.execute(sql_delete_fn, (
+                            user_id_data,
+                            entry_id_data
+                            ))
             message = "Entry successfully deleted"
-            self.deleted_entries += 1
         return message
 
     def getOneEntry(self, user_id, entry_id):
@@ -117,28 +142,26 @@ class Entries:
             message = "Entry does not exist"
             return jsonify({"message":message})
         entry = {
-            'entry_id':row[0][0], 
-            'user_id':row[0][1], 
-            'title':row[0][2],
-            'data':row[0][3],
-            'date':row[0][4]
+            'entry_id': row[0][0], 
+            'user_id': row[0][1], 
+            'title': row[0][2],
+            'data': row[0][3],
+            'date': row[0][4]
             }
-        return jsonify({"entry":entry})
+        return jsonify({"entry": entry})
 
     def getAllEntries(self, user_id_data):
         sql_check_fn = """SELECT * from entries WHERE user_id = %s;"""
         app_db.cursor.execute(sql_check_fn, [user_id_data])
         rows = app_db.cursor.fetchall()
-        if rows == []:
-            message = "No entries found"
-            return jsonify({"error":message})
         entry_list = []
         for row in rows:
             entry = { 
-                'user_id':row[1], 
-                'title':row[2],
-                'data':row[3],
-                'date':row[4]
+                'entry_id': row[0],
+                'user_id': row[1],
+                'title': row[2],
+                'data': row[3],
+                'date': row[4]
                 }
             entry_list.append(entry)
-        return jsonify({"entries":entry_list[:]})
+        return jsonify({"entries": entry_list[:]})
