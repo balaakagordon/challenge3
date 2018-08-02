@@ -23,7 +23,6 @@ now_time = "".join(str(datetime.datetime.now().day) +
 @app.route('/auth/signup', methods=['GET', 'POST'])
 def register():
     nums = "0123456789"
-    #invalid_str = ",.;:!][(<)|>@£#%^&*-_=+}{?"
     invalid_str = ",.;:!][)(><+-=}{"
     if request.method == 'POST':
         if not request.json:
@@ -36,8 +35,6 @@ def register():
             return jsonify({"input error": "Please provide a user password"}), 400
         data = request.get_json()
         user_name=data["name"]
-        #print(request.data[0])
-        #user_name=request.data["user"]["name"]
         name_error = False
         if len(user_name) <= 4:
             message = "Please enter a valid first and last name"
@@ -85,7 +82,7 @@ def userlogin():
         login_password=request.json.get('password', "")
         logged_in = my_diary_object.userLogin(login_email, login_password)
         if type(logged_in) == int:
-            access_token = create_access_token(identity=logged_in)
-            #return jsonify(access_token=access_token), 200
+            expires = datetime.timedelta(hours=1)
+            access_token = create_access_token(identity=logged_in, expires_delta=expires)
             return json.dumps({"access_token": access_token}), 200
         return jsonify({'login' : logged_in}), 401

@@ -81,14 +81,19 @@ def put_entry(diary_entry_id):
         return jsonify({"message": "Diary entry data not found"}), 400
     if 'entrytitle' not in request.json:
         return jsonify({"message": "Diary entry title title"}), 400
-    entry_data = request.json.get('entrydata', "")
-    title_data = request.json.get('entrytitle', "")
+    # entry_data = request.json.get('entrydata', "")
+    # title_data = request.json.get('entrytitle', "")
+    data = request.get_json()
+    entry_data=data["entrydata"]
+    title_data=data["entrytitle"]
+    
+    edit_time = now_time
     user_id_data = get_jwt_identity()
     entry_id_data = diary_entry_id
     edit_entry = my_diary_object.user_entries.modifyEntry(
                     title_data,
                     entry_data,
-                    now_time,
+                    edit_time,
                     entry_id_data,
                     user_id_data
                     )

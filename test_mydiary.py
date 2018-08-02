@@ -295,36 +295,35 @@ class Test_apis(unittest.TestCase):
                         headers={"authorization": 'Bearer ' + str(mytoken)})
         self.assertEqual(response4.status_code, 409)
         self.assertIn('Entry already exists', str(response4.data))
-        
-        
-        
-        
 
-    # def test_get_one_entry(self):
-    #     """ a test for the data returned by the get method and an index """
-    #     tester = app.test_client(self)
-    #     response_reg = tester.post('/auth/signup',\
-    #                     data=json.dumps('{"name": "test user",\
-    #                     "email": "email@test.com","password":"testpass"}'),\
-    #                     content_type='application/json')
-    #     response_log = tester.post('/auth/login',\
-    #                     data=json.dumps('{"email": "email@test.com",\
-    #                     "password":"testpass"}'),\
-    #                     content_type='application/json')
-    #     mytoken = response_log.data["access_token"]
-    #     response_add_ent = tester.post('/api/v1/entries',\
-    #                     data=json.dumps('{"entrydata": "Test for returning a single entry",\
-    #                     "entrytitle": "Get entry test"}'),\
-    #                     content_type='application/json',\
-    #                     authorization= 'Bearer ' + str(mytoken))
-    #     response_get = tester.get('/api/v1/entries/1',\
-    #                     content_type='application/json', \
-    #                     authorization= 'Bearer ' + str(mytoken))
+    def test_get_one_entry(self):
+        """ a test for the data returned by the get method and an index """
+        tester = app.test_client(self)
+        response1 = tester.post('/auth/signup',\
+                        data=json.dumps('{"name": "test user",\
+                        "email": "email@gettest1.com","password":"testpass"}'),\
+                        content_type='application/json')
+        response2 = tester.post('/auth/login',\
+                        data=json.dumps('{"email": "email@gettest1.com",\
+                        "password":"testpass"}'),\
+                        content_type='application/json')
+        tokendata = json.loads(response2.data)
+        mytoken = tokendata["access_token"]
+        response3 = tester.post('/api/v1/entries',\
+                        data=json.dumps('{"entrydata": "Test for returning a single entry",\
+                        "entrytitle": "Get entry test"}'),\
+                        content_type='application/json',\
+                        headers={"authorization": 'Bearer ' + str(mytoken)})
+        response4 = tester.get('/api/v1/entries/1',\
+                        content_type='application/json', \
+                        headers={"authorization": 'Bearer ' + str(mytoken)})
+        self.assertIn('test getting one entry', str(response4.data))
+        self.assertEqual(response4.status_code, 200)
+        
     #     response_get_err = tester.get('/api/v1/entries/10',\
     #                     content_type='application/json', \
     #                     authorization= 'Bearer ' + str(mytoken))                        
-    #     self.assertIn('test getting one entry', str(response_get.data))
-    #     self.assertEqual(response_get.status_code, 200)
+        
     #     self.assertIn('The specified entry cannot be found', str(response_get_err.data))
     #     self.assertEqual(response_get_err.status_code, 400)
 

@@ -31,6 +31,7 @@ class MyDiary:
                             user_email,
                             user_password
                             ))
+            app_db.conn.commit()
             message = "Added successfully"
         else:
             message = "This user already exists!"
@@ -75,6 +76,7 @@ class Entries:
                             entry_data,
                             now_time
                             ))
+            app_db.conn.commit()
             message = "Entry added successfully"
         else:
             message = "Entry already exists"
@@ -84,15 +86,14 @@ class Entries:
     def modifyEntry(self, title_data, entry_data, edit_time, entry_id_data, user_id_data):
         """ edits diary entries """
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, (
-                            user_id_data,
-                            entry_id_data
-                            ))
+        app_db.cursor.execute(sql_check_fn, (user_id_data, entry_id_data))
         rows = app_db.cursor.fetchall()
         if rows == []:
             message = "Entry not found"
+        elif rows[0][4] != edit_time:
+            message = "Sorry, cannot edit entries made before today"
         else:
-            sql_update_fn = """UPDATE entries SET title = %s, data = %s, date_created = %s WHERE user_id = %s AND entry_id = %s;"""
+            sql_update_fn = """UPDATE entries SET title = %s, data = %s, date_modified = %s WHERE user_id = %s AND entry_id = %s;"""
             app_db.cursor.execute(sql_update_fn, (
                             title_data,
                             entry_data,
@@ -101,6 +102,7 @@ class Entries:
                             entry_id_data
                             ))
             message = "Entry edited"
+            app_db.conn.commit()
         return message
 
     def getOneEntry(self, user_id, entry_id):
