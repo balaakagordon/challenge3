@@ -14,6 +14,6 @@ services:
 before_script:
   - psql -c "CREATE DATABASE my_diary;" -U postgres
 script:
-  - nosetests --with-coverage --cover-package=mydiary
+  - nosetests -v --with-coverage --cover-package=mydiary
 after_success:
   - coveralls
