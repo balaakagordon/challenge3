@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.4"
+cache: pip
+before_install:
+  - pip install -U pip
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+  - pip install coverage
+  - pip install nose
+script:
+  - nosetests --with-coverage --cover-package=mydiaryapp/tests
+after_success:
+  - coveralls
