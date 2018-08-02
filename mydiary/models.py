@@ -22,7 +22,7 @@ class MyDiary:
 
     def addUser(self, user_name, user_email, user_password):
         sql_check_fn = """SELECT * from users WHERE email = %s;"""
-        app_db.cursor.execute(sql_check_fn, [user_email])
+        app_db.cursor.execute(sql_check_fn, (user_email,))
         rows = app_db.cursor.fetchall()
         if rows == []:
             sql_insert_fn = """INSERT INTO users (name, email, password) VALUES(%s, %s, %s);"""
@@ -105,9 +105,9 @@ class Entries:
             app_db.conn.commit()
         return message
 
-    def getOneEntry(self, user_id, entry_id):
+    def getOneEntry(self, user_id, diary_entry_id):
         sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, (user_id, entry_id))
+        app_db.cursor.execute(sql_check_fn, (user_id, diary_entry_id))
         row = app_db.cursor.fetchall()
         if row == []:
             message = "The specified entry cannot be found"

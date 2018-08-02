@@ -26,9 +26,9 @@ def get_entry(diary_entry_id):
                     user_id,
                     diary_entry_id
                     )
-    if get_entry == 'The specified entry cannot be found.':
+    if get_entry == 'The specified entry cannot be found':
         return jsonify({'error': get_entry}), 400
-    return jsonify({'entry': get_entry}), 200
+    return jsonify({'get entry': get_entry}), 200
 
 """ returns all diary entries """
 @app.route('/api/v1/entries', methods=['GET'])
@@ -76,7 +76,7 @@ def post_entry():
 def put_entry(diary_entry_id):
     """ this method updates an entry's data """
     if not request.json:
-        return jsonify({"input error": "please input data in json format"}), 401
+        return jsonify({"input error": "please input data in json format"}), 400
     if 'entrydata' not in request.json:
         return jsonify({"message": "Diary entry data not found"}), 400
     if 'entrytitle' not in request.json:

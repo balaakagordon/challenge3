@@ -32,9 +32,9 @@ class MyDiary_Database:
         self.conn.commit()
 
     def drop_entries_table(self):
-        self.cursor.execute("""DROP TABLE IF NOT EXISTS entries""")
+        self.cursor.execute("""DROP TABLE IF EXISTS entries;""")
         self.cursor.commit()
 
     def drop_users_table(self):
-        self.cursor.execute("""DROP TABLE IF NOT EXISTS users""")
+        self.cursor.execute("""DROP TABLE IF EXISTS users;""")
         self.cursor.commit() 

@@ -13,6 +13,8 @@ app.config['JWT_SECRET_KEY'] = 'secret'
 jwt = JWTManager(app)
 
 app_db = MyDiary_Database()
+# app_db.drop_users_table()
+# app_db.drop_entries_table()
 app_db.new_users_table()
 app_db.new_entries_table()
 
