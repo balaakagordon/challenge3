@@ -50,18 +50,6 @@ class MyDiary:
         return rows[0][0]
 
 
-    def logout(self):
-        """ logout method clears the currentUser and userEntries \
-        variables """
-        if self.current_user != None:
-            self.current_user = None
-            self.user_entries = None
-            message = "Logout successful"
-        else:
-            message = "Nobody logged in!"
-        return message
-
-
 class Entries:
     """ Entry lists for each user are modelled as objects with \
     parameters and methods """
@@ -115,32 +103,13 @@ class Entries:
             message = "Entry edited"
         return message
 
-    def deleteEntry(self, entry_id_data, user_id_data):
-        """ this method deletes diary entries """
-        sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
-        app_db.cursor.execute(sql_check_fn, (
-                            user_id_data,
-                            entry_id_data
-                            ))
-        rows = app_db.cursor.fetchall()
-        if rows == []:
-            message = "Unable to delete. Entry does not exist"
-        else:
-            sql_delete_fn = """DELETE from entries where user_id = %s AND entry_id = %s;"""
-            app_db.cursor.execute(sql_delete_fn, (
-                            user_id_data,
-                            entry_id_data
-                            ))
-            message = "Entry successfully deleted"
-        return message
-
     def getOneEntry(self, user_id, entry_id):
-        sql_check_fn = """SELECT * from entries WHERE user_id = %d AND entry_id = %d;"""
+        sql_check_fn = """SELECT * from entries WHERE user_id = %s AND entry_id = %s;"""
         app_db.cursor.execute(sql_check_fn, (user_id, entry_id))
         row = app_db.cursor.fetchall()
         if row == []:
-            message = "Entry does not exist"
-            return jsonify({"message":message})
+            message = "The specified entry cannot be found"
+            return message
         entry = {
             'entry_id': row[0][0], 
             'user_id': row[0][1], 
@@ -148,7 +117,7 @@ class Entries:
             'data': row[0][3],
             'date': row[0][4]
             }
-        return jsonify({"entry": entry})
+        return entry
 
     def getAllEntries(self, user_id_data):
         sql_check_fn = """SELECT * from entries WHERE user_id = %s;"""
@@ -164,4 +133,4 @@ class Entries:
                 'date': row[4]
                 }
             entry_list.append(entry)
-        return jsonify({"entries": entry_list[:]})
+        return entry_list[:]

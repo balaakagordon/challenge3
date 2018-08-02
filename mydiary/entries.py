@@ -26,9 +26,9 @@ def get_entry(diary_entry_id):
                     user_id,
                     diary_entry_id
                     )
-    if get_entry == None:
-        return jsonify({'error': 'Bad request, the specified entry does not exist.'}), 400
-    return get_entry, 200
+    if get_entry == 'The specified entry cannot be found.':
+        return jsonify({'error': get_entry}), 400
+    return jsonify({'entry': get_entry}), 200
 
 """ returns all diary entries """
 @app.route('/api/v1/entries', methods=['GET'])
@@ -37,7 +37,7 @@ def get_all_entries():
     """ outputs all entries for the logged in user """
     user_id_data = get_jwt_identity()
     get_entries = my_diary_object.user_entries.getAllEntries(user_id_data)
-    return get_entries, 200
+    return jsonify({'entries': get_entries}), 200
 
 """ this route adds single diary entry """
 @app.route('/api/v1/entries', methods=['POST'])
@@ -45,11 +45,11 @@ def get_all_entries():
 def post_entry():
     """ this method creates a new entry """
     if not request.json:
-        return jsonify({"input error": "please input json data"}), 401
+        return jsonify({"input error": "please input json data"}), 400
     if 'entrydata' not in request.json:
-        return jsonify({"message": "Diary entry field cannot be left blank"}), 400
+        return jsonify({"message": "Cannot find diary entry"}), 400
     if 'entrytitle' not in request.json:
-        return jsonify({"message": "Diary entry title cannot be left blank"}), 400
+        return jsonify({"message": "Cannot find diary title"}), 400
     entry_data=request.json.get('entrydata', "")
     title_data=request.json.get('entrytitle', "")
     user_id_data = get_jwt_identity()
@@ -66,7 +66,8 @@ def post_entry():
             'entrydata' : entry_data,
             'datecreated' : now_time
         }
-    return jsonify({'message' : add_entry, 'entry added' : new_entry}), 201
+        return jsonify({'message' : add_entry, 'entry added' : new_entry}), 201
+    return jsonify({'message' : add_entry}), 409
 
 """ this route updates a single diary entry """
 @app.route('/api/v1/entries/<int:diary_entry_id>', \
@@ -75,11 +76,11 @@ def post_entry():
 def put_entry(diary_entry_id):
     """ this method updates an entry's data """
     if not request.json:
-        return jsonify({"input error": "please input json data"}), 401
+        return jsonify({"input error": "please input data in json format"}), 401
     if 'entrydata' not in request.json:
-        return jsonify({"message": "Diary entry field cannot be left blank"}), 400
+        return jsonify({"message": "Diary entry data not found"}), 400
     if 'entrytitle' not in request.json:
-        return jsonify({"message": "Diary entry title cannot be left blank"}), 400
+        return jsonify({"message": "Diary entry title title"}), 400
     entry_data = request.json.get('entrydata', "")
     title_data = request.json.get('entrytitle', "")
     user_id_data = get_jwt_identity()
@@ -101,3 +102,6 @@ def put_entry(diary_entry_id):
         }
         return jsonify({'entry':entry}), 201
     return jsonify({'error': edit_entry}), 400
+
+
+####Add editing time constraints#####

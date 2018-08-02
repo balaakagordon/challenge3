@@ -5,6 +5,7 @@ import psycopg2
 
 class MyDiary_Database:
     def __init__(self):
+
         my_db = 'mydiary_db'
         try:
             self.conn = psycopg2.connect(dbname=my_db, user='mydiary_user', host='localhost', password='password', port='5432')
