@@ -9,7 +9,11 @@ install:
   - pip install coveralls
   - pip install coverage
   - pip install nose
+services:
+  - postgres
+before_script:
+  - psql -c "CREATE DATABASE my_diary;" -U postgres
 script:
-  - nosetests --with-coverage
+  - nosetests --with-coverage --cover-package=mydiary
 after_success:
   - coveralls
