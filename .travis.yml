@@ -2,8 +2,6 @@ language: python
 python:
   - "3.4"
 cache: pip
-before_install:
-  - pip install -U pip
 install:
   - pip install -r requirements.txt
   - pip install coveralls
