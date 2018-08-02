@@ -10,7 +10,7 @@ install:
   - pip install coverage
   - pip install nose
 services:
-  - postgres
+  - postgresql
 before_script:
   - psql -c "CREATE DATABASE my_diary;" -U postgres
 script:
