@@ -81,8 +81,6 @@ def put_entry(diary_entry_id):
         return jsonify({"message": "Diary entry data not found"}), 400
     if 'entrytitle' not in request.json:
         return jsonify({"message": "Diary entry title title"}), 400
-    # entry_data = request.json.get('entrydata', "")
-    # title_data = request.json.get('entrytitle', "")
     data = request.get_json()
     entry_data=data["entrydata"]
     title_data=data["entrytitle"]
@@ -107,6 +105,3 @@ def put_entry(diary_entry_id):
         }
         return jsonify({'entry':entry}), 201
     return jsonify({'error': edit_entry}), 400
-
-
-####Add editing time constraints#####

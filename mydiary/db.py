@@ -28,5 +28,13 @@ class MyDiary_Database:
                     user_id INTEGER NOT NULL, 
                     title VARCHAR(20) NOT NULL, 
                     data VARCHAR(500) NOT NULL, 
-                    date_created VARCHAR(10) NOT NULL);""")
+                    date_modified VARCHAR(10) NOT NULL);""")
         self.conn.commit()
+
+    def drop_entries_table(self):
+        self.cursor.execute("""DROP TABLE IF NOT EXISTS entries""")
+        self.cursor.commit()
+
+    def drop_users_table(self):
+        self.cursor.execute("""DROP TABLE IF NOT EXISTS users""")
+        self.cursor.commit() 
