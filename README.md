@@ -64,3 +64,4 @@ Check that the application is now be running on the localhost server(http://127.
 This application can also be found on [Heroku](https://mydiary-gbalaaka.herokuapp.com/home/api/v1/entries)
 The app's templates can be seen on [GitHub pages](https://balaakagordon.github.io/MyDiary_GB/)
 The api is documented on [SwaggerHub](virtserver.swaggerhub.com/Andela_Gordon/MyDiary_GB/1)
+https://app.swaggerhub.com/apis/Andela_Gordon/MyDiary_GB/1
