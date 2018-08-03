@@ -389,7 +389,7 @@ class Test_apis(unittest.TestCase):
                         headers={"authorization": 'Bearer ' + str(mytoken)})
         self.assertEqual(response5.status_code, 200)
         self.assertIn('test getting all entries ', str(response5.data))
-        self.assertIn('test getting all user entries', str(response5.data))           ######///////////
+        self.assertIn('test getting all user entries', str(response5.data))
 
     def test_edit_entry_data(self):
         """ a test for the data returned by the get method and no entry index """
