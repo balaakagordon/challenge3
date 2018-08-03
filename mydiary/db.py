@@ -7,7 +7,7 @@ class MyDiary_Database:
 
         my_db = 'mydiary_database'
         try:
-            self.conn = psycopg2.connect(dbname=my_db, user='postgres', host='localhost', password='', port='5432')
+            self.conn = psycopg2.connect(dbname=my_db, user='postgres', host='localhost', password='password', port='5432')
             self.cursor = self.conn.cursor()
         except Exception as e:
             print("Unable to connect. Check dbname, user or password inputs.")
