@@ -336,3 +336,57 @@ class Test_apis(unittest.TestCase):
                         content_type='application/json', \
                         headers={"authorization": 'Bearer ' + str(mytoken)})
         self.assertEqual(response3.status_code, 200)
+
+    def test_get_one_entry_non_existent_entry_id(self):
+            """ a test for the data returned by the get method and an index """
+            tester = app.test_client(self)
+            response1 = tester.post('/auth/signup',\
+                            data=json.dumps({"name": "test user",\
+                            "email": "email@gettest2.com","password":"testpass"}),\
+                            content_type='application/json')
+            response2 = tester.post('/auth/login',\
+                            data=json.dumps({"email": "email@gettest2.com",\
+                            "password":"testpass"}),\
+                            content_type='application/json')
+            tokendata = json.loads(response2.data)
+            mytoken = tokendata["access_token"]
+            response3 = tester.post('/api/v1/entries',\
+                            data=json.dumps({"entrydata": "Test for returning a single entry",\
+                            "entrytitle": "Get entry test"}),\
+                            content_type='application/json',\
+                            headers={"authorization": 'Bearer ' + str(mytoken)})
+            response4 = tester.get('/api/v1/entries/500',\
+                            content_type='application/json', \
+                            headers={"authorization": 'Bearer ' + str(mytoken)})
+            self.assertIn('The specified entry cannot be found', str(response4.data))
+            self.assertEqual(response4.status_code, 400)
+
+    def test_get_all_entries_data(self):
+        """ a test for the data returned by the get method and no entry index """
+        tester = app.test_client(self)
+        response1 = tester.post('/auth/signup',\
+                        data=json.dumps({"name": "test user",\
+                        "email": "email@get1.com","password":"testpass"}),\
+                        content_type='application/json')
+        response2 = tester.post('/auth/login',\
+                        data=json.dumps({"email": "email@get1.com",\
+                        "password":"testpass"}),\
+                        content_type='application/json')
+        tokendata = json.loads(response2.data)
+        mytoken = tokendata["access_token"]
+        response3 = tester.post('/api/v1/entries',\
+                        data=json.dumps({"entrydata": "test getting all entries",\
+                        "entrytitle": "test get method"}),\
+                        content_type='application/json',\
+                        headers={"authorization": 'Bearer ' + str(mytoken)})
+        response4 = tester.post('/api/v1/entries',\
+                        data=json.dumps({"entrydata": "test getting all user entries",\
+                        "entrytitle": "test get method again"}),\
+                        content_type='application/json',\
+                        headers={"authorization": 'Bearer ' + str(mytoken)})
+        response5 = tester.get('/api/v1/entries',\
+                        content_type='application/json', \
+                        headers={"authorization": 'Bearer ' + str(mytoken)})
+        self.assertEqual(response5.status_code, 200)
+        self.assertIn('test getting all entries ', str(response5.data))
+        self.assertIn('test getting all user entries', str(response5.data))
