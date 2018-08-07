@@ -4,7 +4,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-from .db import MyDiary_Database
+from .db import MyDiaryDatabase
 
 
 app = Flask(__name__)
@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'secret'
 jwt = JWTManager(app)
 
-app_db = MyDiary_Database()
+app_db = MyDiaryDatabase()
 # app_db.drop_users_table()
 # app_db.drop_entries_table()
 app_db.new_users_table()
