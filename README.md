@@ -2,8 +2,8 @@
 
 MyDiary is an online application where users can note down their thoughts and feelings. Set up your account and begin documenting your emotions.
 
-
-
+[![Build Status](https://travis-ci.org/balaakagordon/challenge3.svg?branch=finish_feedback)](https://travis-ci.org/balaakagordon/challenge3)
+[![Coverage Status](https://coveralls.io/repos/github/balaakagordon/challenge3/badge.svg)](https://coveralls.io/github/balaakagordon/challenge3)
 
 
 ## Getting Started
