@@ -36,4 +36,10 @@ class MyDiary_Database:
 
     def drop_users_table(self):
         self.cursor.execute("""DROP TABLE IF EXISTS users;""")
-        self.cursor.commit() 
+        self.cursor.commit()
+
+    def check_table(self,table_name):
+        sql_check_fn = """SELECT * from %s;"""
+        self.cursor.execute(sql_check_fn, (table_name,))
+        rows = self.cursor.fetchall()
+        return rows
