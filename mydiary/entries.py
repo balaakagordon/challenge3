@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-from models import MyDiary, Entries
+from .models import MyDiary, Entries
 from mydiary import app, app_db
 
 
