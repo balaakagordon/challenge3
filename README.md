@@ -2,8 +2,8 @@
 
 MyDiary is an online application where users can note down their thoughts and feelings. Set up your account and begin documenting your emotions.
 
-
-
+[![Build Status](https://travis-ci.org/balaakagordon/challenge3.svg?branch=finish_feedback)](https://travis-ci.org/balaakagordon/challenge3)
+[![Coverage Status](https://coveralls.io/repos/github/balaakagordon/challenge3/badge.svg)](https://coveralls.io/github/balaakagordon/challenge3)
 
 
 ## Getting Started
@@ -64,4 +64,3 @@ Check that the application is now be running on the localhost server(http://127.
 This application can also be found on [Heroku](https://mydiary-gbalaaka.herokuapp.com/home/api/v1/entries)
 The app's templates can be seen on [GitHub pages](https://balaakagordon.github.io/MyDiary_GB/)
 The api is documented on [SwaggerHub](virtserver.swaggerhub.com/Andela_Gordon/MyDiary_GB/1)
-https://app.swaggerhub.com/apis/Andela_Gordon/MyDiary_GB/1
