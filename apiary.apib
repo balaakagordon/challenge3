@@ -1,0 +1,176 @@
+FORMAT: 1A
+HOST: https://mydiary3-gbalaaka.herokuapp.com/
+
+# mydiary
+
+MyDiary is a simple API allowing consumers to write down their thoughts and emotions for later review.
+
+## User Registration [/auth/signup]
+
+### Create a New User [POST]
+
+You may create a new user profile using this action. It takes a JSON
+object containing a name, an email and a password.
+
++ Request (application/json)
+
+        {
+            "name": "Gordon Balaaka",
+            "email": "myname@email.com",
+            "password": "mypass"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "user": {
+                    "email": "myname@email.com",
+                    "name": "Gordon Balaaka"
+                }
+            }
+
+
+## User Authorisation [/auth/login]
+
+### User Login [POST]
+
+You may login to your account using this action. It takes a JSON
+object containing an email and a password.
+
++ Request (application/json)
+
+        {
+            "email": "myname@email.com",
+            "password": "mypass"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMmE1ODk5Zi05YzJlLTQ0MDYtYTZhMS01OTQ2MWM5ZGQ0ZmYiLCJleHAiOjE1MzM2NTgzMzksImZyZXNoIjpmYWxzZSwiaWF0IjoxNTMzNjU0NzM5LCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTMzNjU0NzM5LCJpZGVudGl0eSI6MTZ9.gIE30xpZXhk17c0KAXznwu6h22ek1ko-IfLB7uHpolo"
+            }
+
+
+## User Entries [/api/v1/entries]
+
+### Create a New Entry [POST]
+
+You may create a new diary entry using this action. It takes a JSON
+object containing a the entry's data and title.
+
++ Request (application/json)
+
+        {
+            "entrydata": "This is my first diary entry",
+            "entrytitle": "First Title"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMmE1ODk5Zi05YzJlLTQ0MDYtYTZhMS01OTQ2MWM5ZGQ0ZmYiLCJleHAiOjE1MzM2NTgzMzksImZyZXNoIjpmYWxzZSwiaWF0IjoxNTMzNjU0NzM5LCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTMzNjU0NzM5LCJpZGVudGl0eSI6MTZ9.gIE30xpZXhk17c0KAXznwu6h22ek1ko-IfLB7uHpolo
+
+    + Body
+
+            {
+                "entry added": {
+                    "datecreated": "7/8/2018",
+                    "entrydata": "first diary entry",
+                    "title": "First Title",
+                    "user_id": 16
+                },
+                "message": "Entry added successfully"
+            }
+
+
+### List All User Entries [GET]
+
+This action returns a list of user entries in JSON format.
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMmE1ODk5Zi05YzJlLTQ0MDYtYTZhMS01OTQ2MWM5ZGQ0ZmYiLCJleHAiOjE1MzM2NTgzMzksImZyZXNoIjpmYWxzZSwiaWF0IjoxNTMzNjU0NzM5LCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTMzNjU0NzM5LCJpZGVudGl0eSI6MTZ9.gIE30xpZXhk17c0KAXznwu6h22ek1ko-IfLB7uHpolo
+
+    + Body
+
+            {
+                "entries": [
+                    {
+                        "data": "first diary entry",
+                        "date": "7/8/2018",
+                        "entry_id": 8,
+                        "title": "First Title",
+                        "user_id": 16
+                    },
+                    {
+                        "data": "My diary second entry",
+                        "date": "7/8/2018",
+                        "entry_id": 9,
+                        "title": "Second Entry",
+                        "user_id": 16
+                    }
+                ]
+            }
+
+
+## Diary Entry [/api/v1/entries/1]
+
+### List A Single User Entry [GET]
+
+This action returns a single user entry in JSON format.
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMmE1ODk5Zi05YzJlLTQ0MDYtYTZhMS01OTQ2MWM5ZGQ0ZmYiLCJleHAiOjE1MzM2NTgzMzksImZyZXNoIjpmYWxzZSwiaWF0IjoxNTMzNjU0NzM5LCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTMzNjU0NzM5LCJpZGVudGl0eSI6MTZ9.gIE30xpZXhk17c0KAXznwu6h22ek1ko-IfLB7uHpolo
+
+    + Body
+
+            {
+                "entry": {
+                    "datecreated": "7/8/2018",
+                    "entry_id": 1,
+                    "entrydata": "first diary entry",
+                    "title": "First Title",
+                    "user_id": 16
+                }
+            }
+
+### Modify an Entry [PUT]
+
+You may modify an entry using this action. It takes a JSON
+object containing the entry's data and title.
+
++ Request (application/json)
+
+        {
+            "entrydata": "This is my edited diary entry",
+            "entrytitle": "First Title"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMmE1ODk5Zi05YzJlLTQ0MDYtYTZhMS01OTQ2MWM5ZGQ0ZmYiLCJleHAiOjE1MzM2NTgzMzksImZyZXNoIjpmYWxzZSwiaWF0IjoxNTMzNjU0NzM5LCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTMzNjU0NzM5LCJpZGVudGl0eSI6MTZ9.gIE30xpZXhk17c0KAXznwu6h22ek1ko-IfLB7uHpolo
+
+    + Body
+
+            {
+                "entry added": {
+                    "datecreated": "7/8/2018",
+                    "entry_id": 1,
+                    "entrydata": "This is my edited diary entry",
+                    "title": "First Title",
+                    "user_id": 16
+                },
+                "message": "Entry added successfully"
+            }
