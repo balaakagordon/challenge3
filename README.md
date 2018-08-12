@@ -10,8 +10,8 @@ MyDiary is an online application where users can note down their thoughts and fe
 These instructions will help you get the application running on your local machine for development and testing.
 
 ### Prerequisites
-* [Python] (https://www.python.org/getit/)
-* [Pip] (https://pip.pypa.io/en/stable/installing/)
+* [Python](https://www.python.org/getit/)
+* [Pip](https://pip.pypa.io/en/stable/installing/)
 
 ### Setup
 * Clone the remote repository on [GitHub](https://github.com/new)

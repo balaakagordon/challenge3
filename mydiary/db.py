@@ -1,23 +1,15 @@
 #!/usr/bin/python
 
-import os
 import psycopg2
 
 
 class MyDiaryDatabase:
-    def __init__(self):
+    def __init__(self, db_name):
 
-        mydb = os.environ.get('db_name', None)
-        #mydb = 'mydiarydb'
-        if mydb == "testdb":
-            print "test database"
-        elif mydb == "mydiarydb":
-            print "main database"
-        else:
-            print "no database"
+        self.mydb = db_name
 
         try:
-            self.conn = psycopg2.connect(dbname=mydb, user='postgres', host='localhost', password='password', port='5432')
+            self.conn = psycopg2.connect(dbname=self.mydb, user='postgres', host='localhost', password='password', port='5432')
             self.cursor = self.conn.cursor()
         except Exception as e:
             print("Unable to connect. Check dbname, user or password inputs.")
