@@ -3,14 +3,19 @@ Contains the tests for the apis
 """
 from flask import json, jsonify
 import unittest
+import os
 
-from mydiary import app, app_db
+from mydiary import app, now_time
+from mydiary.db import MyDiaryDatabase
 
+
+def setUp():
+    os.environ["db_name"] = "testdb"
+    pass
 
 class Test_apis(unittest.TestCase):
     """ This class holds all api tests  """
 
-    
     def test_registration_successful(self):
         tester = app.test_client(self)
         response_reg = tester.post('/auth/signup',\
@@ -417,4 +422,8 @@ class Test_apis(unittest.TestCase):
                         headers={"authorization": 'Bearer ' + str(mytoken)})
         self.assertEqual(response4.status_code, 201)
         self.assertIn('test editing an entry', str(response4.data))
-        self.assertNotIn("initial put test data", str(response4.data))        
+        self.assertNotIn("initial put test data", str(response4.data))
+    
+
+if __name__ == '__main__':
+    unittest.main()

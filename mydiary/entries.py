@@ -1,20 +1,16 @@
 from flask import Flask, jsonify, request
-import datetime
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
 
 from .models import MyDiary, Entries
-from mydiary import app, app_db
+from mydiary import app, app_db, now_time
 
 
 my_diary_object = MyDiary()
 my_diary_object.user_entries = Entries()
 
-now_time = "".join(str(datetime.datetime.now().day) + 
-            "/" + str(datetime.datetime.now().month) + 
-            "/" + str(datetime.datetime.now().year))
 
 """ returns a single diary entry """
 @app.route('/api/v1/entries/<int:diary_entry_id>', methods=['GET'])

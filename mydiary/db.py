@@ -1,13 +1,15 @@
 #!/usr/bin/python
+
 import psycopg2
 
 
 class MyDiaryDatabase:
-    def __init__(self):
+    def __init__(self, db_name):
 
-        mydb = 'mydiarydb'
+        self.mydb = db_name
+
         try:
-            self.conn = psycopg2.connect(dbname=mydb, user='postgres', host='localhost', password='password', port='5432')
+            self.conn = psycopg2.connect(dbname=self.mydb, user='postgres', host='localhost', password='password', port='5432')
             self.cursor = self.conn.cursor()
         except Exception as e:
             print("Unable to connect. Check dbname, user or password inputs.")
@@ -32,11 +34,11 @@ class MyDiaryDatabase:
 
     def drop_entries_table(self):
         self.cursor.execute("""DROP TABLE IF EXISTS entries;""")
-        self.cursor.commit()
+        self.conn.commit()
 
     def drop_users_table(self):
         self.cursor.execute("""DROP TABLE IF EXISTS users;""")
-        self.cursor.commit()
+        self.conn.commit()
 
     def check_table(self,table_name):
         sql_check_fn = """SELECT * from %s;"""

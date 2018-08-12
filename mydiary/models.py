@@ -6,12 +6,7 @@ Holds the app's classes and methods
 
 """importing packages"""
 from flask import Flask, jsonify
-
-from mydiary import db
 from mydiary import app_db
-
-import datetime
-now = datetime.datetime.now()
 
 
 """ the diary app is modelled as an object with it's own \
@@ -19,6 +14,7 @@ parameters and methods """
 class MyDiary:
     def __init__(self):
         self.user_entries = None
+
 
     def addUser(self, user_name, user_email, user_password):
         sql_check_fn = """SELECT * from users WHERE email = %s;"""
