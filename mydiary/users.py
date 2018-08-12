@@ -32,8 +32,7 @@ def reg_validation(data):
             error_msg = "Invalid character. Please enter a valid first and last name"
             name_error = True
     if name_error:
-        error_code = 400
-        return ["error", error_msg, error_code]
+        return ["error", error_msg, 400]
     user_email=request.json.get('email', "")
     email_error = False
     if "@" not in user_email:
@@ -41,8 +40,7 @@ def reg_validation(data):
     elif user_email[0] in invalid_str:
         email_error = True
     if email_error:
-        error_code = 400
-        return ["error", "Please enter a valid email address", error_code]
+        return ["error", "Please enter a valid email address", 400]
     user_password=request.json.get('password', "")
     if len(user_password) <= 5:
         return ["error", "Password too short", 411]
@@ -51,7 +49,7 @@ def reg_validation(data):
 
 @app.route('/auth/signup', methods=['GET', 'POST'])
 def register():
-    """ Method allows users to create a profile """
+    """ This method accepts user information to create a profile """
     if request.method == 'POST':
         input_error = False
         if not request.json:
