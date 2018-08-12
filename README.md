@@ -61,6 +61,6 @@ Check that the application is now be running on the localhost server(http://127.
 ```
 ### Hosting
 
-This application can also be found on [Heroku](https://mydiary-gbalaaka.herokuapp.com/home/api/v1/entries)
+This application can also be found on [Heroku](https://mydiary3-gbalaaka.herokuapp.com/api/v1/entries)
 The app's templates can be seen on [GitHub pages](https://balaakagordon.github.io/MyDiary_GB/)
 The api is documented on [Apiary](https://mydiary17.docs.apiary.io/#)

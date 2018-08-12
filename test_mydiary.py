@@ -3,15 +3,30 @@ Contains the tests for the apis
 """
 from flask import json, jsonify
 import unittest
+import os
 
-from mydiary import app, app_db
+from mydiary import app, now_time
+from mydiary.db import MyDiaryDatabase
+
 
 
 class Test_apis(unittest.TestCase):
     """ This class holds all api tests  """
 
+    def setUp(self):
+        os.environ["db_name"] = "testdb"
+        app_db = MyDiaryDatabase()
+        app_db.new_users_table()
+        app_db.new_entries_table()
+
+    # def setUp(self):
+    #     os.environ["db_name"] = "testdb"
+    #     app_db = MyDiaryDatabase()
+    #     app_db.new_users_table()
+    #     app_db.new_entries_table()
     
     def test_registration_successful(self):
+        self.setUp()
         tester = app.test_client(self)
         response_reg = tester.post('/auth/signup',\
                         data=json.dumps({"name": "regtest user",\
@@ -21,6 +36,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response_reg.status_code, 201)
     
     def test_registration_not_json(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data={"name": "test user",\
@@ -30,6 +46,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_registration_no_name_field(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"nme": "test user",\
@@ -39,6 +56,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_registration_no_email_field(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test user",\
@@ -48,6 +66,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_registration_no_password_field(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps('{"name": "test user",\
@@ -57,6 +76,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_registration_user_already_exits(self):
+        self.setUp()
         tester = app.test_client(self)
         response1 = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test user",\
@@ -72,6 +92,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('This user already exists', str(response2.data))
                         
     def test_registration_invalid_name(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "t u",\
@@ -82,6 +103,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('Please enter a valid first and last name', str(response.data))
 
     def test_registration_invalid_name_2(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test",\
@@ -92,6 +114,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('Please enter a valid first and last name', str(response.data))
 
     def test_registration_invalid_name_3(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test us!er",\
@@ -102,6 +125,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('Invalid character. Please enter a valid first and last name', str(response.data))
 
     def test_registration_invalid_email(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test user",\
@@ -112,6 +136,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('Please enter a valid email address', str(response.data))
     
     def test_registration_invalid_password(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/signup',\
                         data=json.dumps({"name": "test user",\
@@ -122,6 +147,7 @@ class Test_apis(unittest.TestCase):
         self.assertIn('Password too short', str(response.data))
 
     def test_login_successful(self):
+        self.setUp()
         tester = app.test_client(self)
         response1 = tester.post('/auth/signup', \
                         data=json.dumps({"name": "logtest user",\
@@ -135,6 +161,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response2.status_code, 200)
 
     def test_login_wrong_password(self):
+        self.setUp()
         tester = app.test_client(self)
         response1 = tester.post('/auth/signup', \
                         data=json.dumps({"name": "logtest user",\
@@ -148,6 +175,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response2.status_code, 401)
 
     def test_login_no_account(self):
+        self.setUp()
         tester = app.test_client(self)
         response = tester.post('/auth/login', \
                         data='{"email": "email@logtest3.com",\
@@ -157,6 +185,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_login_no_email_field(self):
+        self.setUp()
         tester = app.test_client(self)
         response1 = tester.post('/auth/signup', \
                         data=json.dumps({"name": "logtest user",\
@@ -170,6 +199,7 @@ class Test_apis(unittest.TestCase):
         self.assertEqual(response2.status_code, 400)
 
     def test_login_no_password_field(self):
+        self.setUp()
         tester = app.test_client(self)
         response1 = tester.post('/auth/signup', \
                         data=json.dumps({"name": "logtest user",\
@@ -417,4 +447,15 @@ class Test_apis(unittest.TestCase):
                         headers={"authorization": 'Bearer ' + str(mytoken)})
         self.assertEqual(response4.status_code, 201)
         self.assertIn('test editing an entry', str(response4.data))
-        self.assertNotIn("initial put test data", str(response4.data))        
+        self.assertNotIn("initial put test data", str(response4.data))
+    
+    # def tearDown(self):
+    #     app_db = MyDiaryDatabase()
+    #     app_db.drop_entries_table()
+    #     app_db.drop_users_table()
+    #     app_db.cursor.close()
+    #     app_db.conn.close()
+
+if __name__ == '__main__':
+    #os.environ["db_name"] = "testdb"
+    unittest.main()

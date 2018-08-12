@@ -1,11 +1,21 @@
 #!/usr/bin/python
+
+import os
 import psycopg2
 
 
 class MyDiaryDatabase:
     def __init__(self):
 
-        mydb = 'mydiarydb'
+        mydb = os.environ.get('db_name', None)
+        #mydb = 'mydiarydb'
+        if mydb == "testdb":
+            print "test database"
+        elif mydb == "mydiarydb":
+            print "main database"
+        else:
+            print "no database"
+
         try:
             self.conn = psycopg2.connect(dbname=mydb, user='postgres', host='localhost', password='password', port='5432')
             self.cursor = self.conn.cursor()
@@ -32,11 +42,11 @@ class MyDiaryDatabase:
 
     def drop_entries_table(self):
         self.cursor.execute("""DROP TABLE IF EXISTS entries;""")
-        self.cursor.commit()
+        self.conn.commit()
 
     def drop_users_table(self):
         self.cursor.execute("""DROP TABLE IF EXISTS users;""")
-        self.cursor.commit()
+        self.conn.commit()
 
     def check_table(self,table_name):
         sql_check_fn = """SELECT * from %s;"""
