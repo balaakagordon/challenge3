@@ -8,62 +8,75 @@ from flask_jwt_extended import (
 import datetime
 
 from .models import MyDiary, Entries
-from mydiary import app, app_db
+from mydiary import app, app_db, now_time
 
 
 my_diary_object = MyDiary()
 my_diary_object.user_entries = Entries()
 
-now_time = "".join(str(datetime.datetime.now().day) +
-                    "/" + str(datetime.datetime.now().month) +
-                    "/" + str(datetime.datetime.now().year))
 
-
-""" this route links to the login page """
-@app.route('/auth/signup', methods=['GET', 'POST'])
-def register():
+def reg_validation(data):
+    """ This method validates user inputs during registration """
     nums = "0123456789"
     invalid_str = ",.;:!][)(><+-=}{"
+    user_name=data["name"]
+    name_error = False
+    if len(user_name) <= 4:
+        error_msg = "Please enter a valid first and last name"
+        name_error = True
+    elif len(user_name.split()) < 2:
+        error_msg = "Please enter a valid first and last name"
+        name_error = True
+    for letter in user_name:
+        if letter in invalid_str or letter in nums:
+            error_msg = "Invalid character. Please enter a valid first and last name"
+            name_error = True
+    if name_error:
+        error_code = 400
+        return ["error", error_msg, error_code]
+    user_email=request.json.get('email', "")
+    email_error = False
+    if "@" not in user_email:
+        email_error = True
+    elif user_email[0] in invalid_str:
+        email_error = True
+    if email_error:
+        error_code = 400
+        return ["error", "Please enter a valid email address", error_code]
+    user_password=request.json.get('password', "")
+    if len(user_password) <= 5:
+        return ["error", "Password too short", 411]
+    return [user_name, user_email, user_password]
+
+
+@app.route('/auth/signup', methods=['GET', 'POST'])
+def register():
+    """ Method allows users to create a profile """
     if request.method == 'POST':
+        input_error = False
         if not request.json:
-            return jsonify({"input error": "invalid data type"}), 400
-        if 'email' not in request.json:
-            return jsonify({"input error": "Please provide an email address"}), 400
-        if 'name' not in request.json:
-            return jsonify({"input error": "Please provide a name for the user"}), 400
-        if 'password' not in request.json:
-            return jsonify({"input error": "Please provide a user password"}), 400
+            error_msg = "invalid data type"
+            input_error = True
+        elif 'email' not in request.json:
+            error_msg = "Please provide an email address"
+            input_error = True
+        elif 'name' not in request.json:
+            error_msg = "Please provide a name for the user"
+            input_error = True
+        elif 'password' not in request.json:
+            error_msg = "Please provide a user password"
+            input_error = True
+        if input_error:
+            return jsonify({"Input error": error_msg}), 400
         data = request.get_json()
-        user_name=data["name"]
-        name_error = False
-        if len(user_name) <= 4:
-            message = "Please enter a valid first and last name"
-            name_error = True
-        elif len(user_name.split()) < 2:
-            message = "Please enter a valid first and last name"
-            name_error = True
-        for letter in user_name:
-            if letter in invalid_str or letter in nums:
-                message = "Invalid character. Please enter a valid first and last name"
-                name_error = True
-        if name_error == True:
-            return jsonify({"input error": message}), 400
-        user_email=request.json.get('email', "")
-        email_error = False
-        if "@" not in user_email:
-            email_error = True
-        elif user_email[0] in invalid_str:
-            email_error = True
-        if email_error == True:
-            return jsonify({"input error": "Please enter a valid email address"}), 400
-        user_password=request.json.get('password', "")
-        if len(user_password) <= 5:
-            return jsonify({"input error": "Password too short"}), 411
-        add_user = my_diary_object.addUser(user_name, user_email, user_password)
+        signup_data = reg_validation(data)
+        if signup_data[0] == "error":
+            return jsonify({"Invalid input": signup_data[1]}), signup_data[2]
+        add_user = my_diary_object.addUser(signup_data[0], signup_data[1], signup_data[2])
         if add_user == "Added successfully":
             user = {
-                'name':user_name,
-                'email':user_email,
+                'name':signup_data[0],
+                'email':signup_data[1],
             }
             return jsonify({"user":user}), 201
         return jsonify({"message": add_user}), 409

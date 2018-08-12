@@ -3,6 +3,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+import datetime
 
 from .db import MyDiaryDatabase
 
@@ -17,6 +18,11 @@ app_db = MyDiaryDatabase()
 # app_db.drop_entries_table()
 app_db.new_users_table()
 app_db.new_entries_table()
+
+now_time = "".join(str(datetime.datetime.now().day) +
+                "/" + str(datetime.datetime.now().month) +
+                "/" + str(datetime.datetime.now().year))
+
 
 from . import entries
 from . import users

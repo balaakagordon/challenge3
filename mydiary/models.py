@@ -7,11 +7,7 @@ Holds the app's classes and methods
 """importing packages"""
 from flask import Flask, jsonify
 
-from mydiary import db
 from mydiary import app_db
-
-import datetime
-now = datetime.datetime.now()
 
 
 """ the diary app is modelled as an object with it's own \
